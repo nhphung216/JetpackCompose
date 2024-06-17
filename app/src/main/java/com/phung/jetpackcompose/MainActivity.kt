@@ -1,7 +1,5 @@
 package com.phung.jetpackcompose
 
-import android.content.res.Configuration
-import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -16,7 +14,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ElevatedButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.coerceAtLeast
@@ -51,9 +54,9 @@ class MainActivity : ComponentActivity() {
 fun MyApp(
     modifier: Modifier = Modifier
 ) {
-    var shouldShowOnboarding by rememberSaveable { mutableStateOf(false) }
+    var shouldShowOnboarding by rememberSaveable { mutableStateOf(true) }
 
-    Surface(modifier = modifier) {
+    Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
         if (shouldShowOnboarding) {
             OnboardingScreen(onContinueClicked = {
                 shouldShowOnboarding = false
@@ -70,14 +73,12 @@ fun GreetingScreen(
     names: List<String> = List(10) { "$it" }
 ) {
     LazyColumn(modifier = modifier.padding(vertical = 4.dp)) {
-        items(items = names) { name ->
-            Greeting(name = name)
-        }
+        items(items = names) { name -> CardContent(name) }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+fun CardContent(name: String) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     val extraPadding by animateDpAsState(
@@ -90,7 +91,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
     Surface(
         color = MaterialTheme.colorScheme.primary,
-        modifier = modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+        modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
         Row(modifier = Modifier.padding(24.dp)) {
             Column(
@@ -105,13 +106,18 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
                         fontWeight = FontWeight.ExtraBold
                     )
                 )
-            }
-            ElevatedButton(
-                onClick = {
-                    expanded = !expanded
+                if (expanded) {
+                    Text(
+                        text = ("Composem ipsum color sit lazy, " +
+                                "padding theme elit, sed do bouncy.").repeat(2)
+                    )
                 }
-            ) {
-                Text(text = if (expanded) "Show less" else "Show more")
+            }
+            IconButton(onClick = { expanded = !expanded }) {
+                Icon(
+                    imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+                    contentDescription = stringResource(if (expanded) R.string.show_less else R.string.show_more)
+                )
             }
         }
     }
